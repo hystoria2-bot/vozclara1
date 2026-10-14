@@ -1,0 +1,2 @@
+Este texto se ha importado desde un archivo de prueba.
+Incluye tildes, la letra eñe y signos de puntuación: ¡hola! ¿Cómo estás?

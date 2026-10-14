@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Convierte texto en una voz natural y descarga el resultado en MP3. Todo se procesa de forma privada en tu navegador."
+    />
+    <meta name="theme-color" content="#f4efe4" />
+    <title>Voz Clara · Texto a voz privado</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+    <script>
+      if (window.location.protocol === "file:") {
+        window.addEventListener("DOMContentLoaded", () => {
+          const notice = document.createElement("div");
+          notice.className = "local-file-notice";
+          notice.setAttribute("role", "alert");
+          notice.innerHTML =
+            "<strong>Falta iniciar la aplicación.</strong> Cierra esta pestaña y abre <code>Abrir Voz Clara.bat</code>. El archivo index.html no funciona al abrirlo directamente.";
+          document.body.prepend(notice);
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="site-header" aria-label="Cabecera principal">
+        <a class="brand" href="./" aria-label="Voz Clara, inicio">
+          <span class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </span>
+          <span>Voz Clara</span>
+        </a>
+        <div class="privacy-pill">
+          <span class="privacy-dot" aria-hidden="true"></span>
+          Privado · sin subir textos
+        </div>
+      </header>
+
+      <section class="hero">
+        <p class="eyebrow">ESTUDIO DE VOZ EN EL NAVEGADOR</p>
+        <h1>Tu texto,<br /><em>con voz natural.</em></h1>
+        <p class="hero-copy">
+          Escribe, escucha y descarga. Sin cuentas, sin cuotas y sin enviar tu contenido a ningún servidor.
+        </p>
+      </section>
+
+      <section class="studio" aria-labelledby="studio-title">
+        <h2 id="studio-title" class="sr-only">Generador de voz</h2>
+
+        <div class="editor-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="step-number">01</span>
+              <h3>Escribe o importa tu texto</h3>
+            </div>
+            <button id="sampleButton" class="text-button" type="button">Usar ejemplo</button>
+          </div>
+
+          <div class="import-row">
+            <label class="file-button" for="fileInput">
+              <span aria-hidden="true">↑</span>
+              Subir documento
+            </label>
+            <input
+              id="fileInput"
+              type="file"
+              accept=".txt,.md,.docx,.pdf,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            />
+            <span class="file-formats">TXT · Markdown · Word · PDF</span>
+          </div>
+          <p id="fileStatus" class="file-status" aria-live="polite"></p>
+
+          <label class="sr-only" for="textInput">Texto que quieres convertir en audio</label>
+          <textarea
+            id="textInput"
+            rows="12"
+            placeholder="Empieza a escribir aquí…"
+            spellcheck="true"
+          ></textarea>
+
+          <div class="editor-meta">
+            <span id="wordCounter">0 / 5.000 palabras</span>
+            <span id="durationEstimate">≈ 0:00 de audio</span>
+          </div>
+          <p id="limitMessage" class="limit-message" role="alert" hidden>
+            El texto supera las 5.000 palabras. Divídelo en capítulos para generar el audio con estabilidad.
+          </p>
+        </div>
+
+        <aside class="controls-panel" aria-label="Ajustes de la voz">
+          <div class="panel-heading compact">
+            <div>
+              <span class="step-number">02</span>
+              <h3>Elige cómo suena</h3>
+            </div>
+          </div>
+
+          <fieldset class="voice-fieldset">
+            <legend>Voz</legend>
+            <div class="voice-options">
+              <label class="voice-card">
+                <input type="radio" name="voice" value="F1" checked />
+                <span class="voice-avatar dora">C</span>
+                <span><strong>Clara</strong><small>Femenina · perfil natural 1</small></span>
+                <span class="radio-mark" aria-hidden="true"></span>
+              </label>
+              <label class="voice-card">
+                <input type="radio" name="voice" value="F2" />
+                <span class="voice-avatar alex">A</span>
+                <span><strong>Alba</strong><small>Femenina · perfil natural 2</small></span>
+                <span class="radio-mark" aria-hidden="true"></span>
+              </label>
+              <label class="voice-card">
+                <input type="radio" name="voice" value="M1" />
+                <span class="voice-avatar santa">M</span>
+                <span><strong>Mateo</strong><small>Masculina · perfil natural 1</small></span>
+                <span class="radio-mark" aria-hidden="true"></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="quality-control">
+            <label for="qualityInput">Calidad de generación</label>
+            <select id="qualityInput">
+              <option value="2">Rápida · recomendada para probar</option>
+              <option value="5" selected>Natural · mejor equilibrio</option>
+              <option value="8">Detallada · algo más lenta</option>
+            </select>
+          </div>
+
+          <label class="normalizer-toggle" for="normalizeNumbers">
+            <input id="normalizeNumbers" type="checkbox" checked />
+            <span>
+              <strong>Mejorar pronunciación en español</strong>
+              <small>Números, mayúsculas, romanos, yeísmo y palabras difíciles</small>
+            </span>
+          </label>
+
+          <div class="speed-control">
+            <div class="control-label">
+              <label for="speedInput">Velocidad</label>
+              <output id="speedValue" for="speedInput">1,0×</output>
+            </div>
+            <input id="speedInput" type="range" min="0.8" max="1.2" step="0.05" value="1" />
+            <div class="range-labels"><span>Pausada</span><span>Natural</span><span>Ágil</span></div>
+          </div>
+
+          <button id="generateButton" class="generate-button" type="button" disabled>
+            <span id="generateIcon" class="button-icon" aria-hidden="true">▶</span>
+            <span id="generateLabel">Crear audio</span>
+          </button>
+
+          <div id="progressArea" class="progress-area" hidden aria-live="polite">
+            <div class="progress-label">
+              <span id="statusText">Preparando el estudio…</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+            <p class="progress-hint">Supertonic usará la tarjeta gráfica cuando esté disponible y cambiará automáticamente a CPU si no lo está.</p>
+          </div>
+
+          <p id="errorMessage" class="error-message" role="alert" hidden></p>
+        </aside>
+      </section>
+
+      <section id="resultPanel" class="result-panel" hidden aria-labelledby="result-title">
+        <div class="result-copy">
+          <span class="success-mark" aria-hidden="true">✓</span>
+          <div>
+            <p class="eyebrow">AUDIO LISTO</p>
+            <h2 id="result-title">Ya puedes escucharlo</h2>
+          </div>
+        </div>
+        <canvas id="waveform" width="820" height="96" aria-hidden="true"></canvas>
+        <audio id="audioPlayer" controls></audio>
+        <a id="downloadButton" class="download-button" download="voz-clara.mp3">
+          <span aria-hidden="true">↓</span> Descargar MP3
+        </a>
+      </section>
+
+      <footer>
+        <p>Supertonic 2 y herramientas de código abierto · todo se procesa en tu navegador.</p>
+        <p>La primera generación descarga el modelo natural (aprox. 265 MB).</p>
+      </footer>
+    </main>
+
+    <script src="./vendor/mammoth.browser.min.js" defer></script>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
